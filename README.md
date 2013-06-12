@@ -1,4 +1,4 @@
-device-computer
+tool_device
 ===============
 
-device-computer
+device for tools_platform
