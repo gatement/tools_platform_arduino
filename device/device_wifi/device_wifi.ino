@@ -14,12 +14,12 @@
 #define RETRY_HOST_TIMEOUT      10000
 #define RETRY_AP_TIMEOUT      10000
 
-#define HOST      "192.168.1.11"
-#define PORT      10000
-#define CONNECT_TIMEOUT 1000
+#define HOST      "xcore.gizwits.com"
+#define PORT      10005
+#define CONNECT_TIMEOUT 15000
 
-#define SSID      "wolf"
-#define KEY       "JohnsonLau"
+#define SSID      "ssid"
+#define KEY       "pwd"
 #define AUTH      WIFLY_AUTH_WPA2_PSK
 
 #define RECV_BUFFER_LEN      100
@@ -211,7 +211,6 @@ boolean connectHost()
     retry_times++;
     if(retry_times == 10)
     {
-      DBG("  too many retry so give up.");
       break;
     }
     delay(RETRY_HOST_TIMEOUT);
