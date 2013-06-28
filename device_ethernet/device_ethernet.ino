@@ -11,10 +11,15 @@
 #define DBG(message)
 #endif // DEBUG
 
-// Update these with values suitable for your network.
+#define RECONNECT_TIMEOUT 10000
+
 byte mac[]    = {  0x00, 0x00, 0x00, 0x00, 0x00, 0x02 };
-byte server[] = { 192, 168, 1, 11 };
+char* deviceId = "000000000002";
 byte ip[]     = { 192, 168, 1, 12 };
+byte server[] = { 192, 168, 1, 11 };
+int port = 1833;
+char* username = "admin";
+char* password = "admin";
 
 void callback(char* topic, byte* payload, unsigned int length) {
   // handle message arrived
@@ -30,14 +35,25 @@ void setup()
   Serial.begin(9600);
 
   Ethernet.begin(mac, ip);
-  if (client.connect("000000000002", "admin", "admin")) {
-    //client.publish("outTopic","hello world");
-    //client.subscribe("inTopic");
-  }
+  connect();
 }
 
 void loop()
 {
-  client.loop();
+  DBG(client.loop());
+  if(!client.loop())
+  {
+    delay(RECONNECT_TIMEOUT);
+    connect();
+  }
+}
+
+void connect()
+{
+  DBG("connecting...");
+  if(client.connect(deviceId, username, password))
+  {
+    DBG("   connected");
+  }
 }
 
