@@ -21,12 +21,13 @@ int port = 1833;
 char* username = "admin";
 char* password = "admin";
 
-void callback(char* topic, byte* payload, unsigned int length) {
-  // handle message arrived
-}
-
 EthernetClient ethClient;
 PubSubClient client(server, 1883, callback, ethClient);
+
+void callback(char* topic, byte* payload, unsigned int length) {
+  DBG0("received: ");
+  DBG(topic);
+}
 
 void setup()
 {
@@ -40,7 +41,6 @@ void setup()
 
 void loop()
 {
-  DBG(client.loop());
   if(!client.loop())
   {
     delay(RECONNECT_TIMEOUT);
