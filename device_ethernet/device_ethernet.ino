@@ -29,15 +29,12 @@ unsigned char switch2 = 3;
 unsigned char switch3 = 5;
 
 long previousMillis = 0;
-long interval = 10000;  
+long sendStatusInterval = 10000;  
 
 EthernetClient ethClient;
 PubSubClient client(server, 1883, callback, ethClient);
 
 void callback(char* topic, byte* payload, unsigned int length) {
-  DBG0(payload[0]);
-  DBG0(payload[1]);
-  DBG(payload[2]);
   if(payload[0] == CMD_SWITCH_CONTROL)
   {
     switch(payload[1])
@@ -52,6 +49,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
         digitalWrite(switch3, payload[2]);
         break;
     } 
+    send_switch_status();
   }
 }
 
@@ -73,26 +71,25 @@ void setup()
 }
 
 void loop()
-{
-  my_loop();
-  
-  if(!client.loop())
+{  
+  if(client.loop())
+  {
+    my_loop();
+  }
+  else
   {
     delay(RECONNECT_TIMEOUT);
-    connect();
+    connect();    
   }
 }
 
 void my_loop()
 {
   unsigned long currentMillis = millis(); 
-  if(currentMillis - previousMillis > interval) {
+  if(currentMillis - previousMillis > sendStatusInterval) 
+  {
     previousMillis = currentMillis;    
-    
-    int switchStatus = digitalRead(switch1) + digitalRead(switch2) * 2 + digitalRead(switch3) * 4;
-    DBG(switchStatus);
-    char payload[] = {char(CMD_SWITCH_STATUS), char(switchStatus)};
-    //client.publish(switchStatusTopic, payload);
+    send_switch_status();
   }
 }
 
@@ -103,5 +100,14 @@ void connect()
   {
     DBG("   connected");
   }
+}
+
+void send_switch_status()
+{
+    int switchStatus = digitalRead(switch1) + digitalRead(switch2) * 2 + digitalRead(switch3) * 4;
+    DBG0("status: ");
+    DBG(switchStatus);
+    uint8_t payload[] = {CMD_SWITCH_STATUS, switchStatus};
+    client.publish(switchStatusTopic, payload, 2);
 }
 
