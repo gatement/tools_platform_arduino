@@ -2,7 +2,7 @@
 #include <Ethernet.h>
 #include <PubSubClient.h>
 
-#define DEBUG // comment me out to disable Debug info
+//#define DEBUG // comment me out to disable Debug info
 #ifdef DEBUG
 #define DBG0(message)    Serial.print(message)
 #define DBG(message)    Serial.println(message)
@@ -19,7 +19,7 @@ byte mac[]    = {  0x00, 0x00, 0x00, 0x00, 0x00, 0x02 };
 char* deviceId = "000000000002";
 char* switchStatusTopic = "/000000000002/switch_status";
 byte ip[]     = { 192, 168, 1, 12 };
-byte server[] = { 192, 168, 1, 11 };
+byte server[] = { 192, 168, 1, 10 };
 int port = 1833;
 char* username = "admin";
 char* password = "admin";
