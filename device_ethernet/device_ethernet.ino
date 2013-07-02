@@ -73,6 +73,7 @@ void connect()
   if(client.connect(deviceId, username, password))
   {
     DBG("   connected");
+    send_switch_status();
   }
 }
 
