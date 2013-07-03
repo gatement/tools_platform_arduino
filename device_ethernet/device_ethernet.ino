@@ -36,7 +36,7 @@ void setup()
   pinMode(switch1, OUTPUT);
   pinMode(switch2, OUTPUT);
   pinMode(switch3, OUTPUT);
-  myDigitalWrite(switch1, LOW);
+  myDigitalWrite(switch1, HIGH);
   myDigitalWrite(switch2, LOW);
   myDigitalWrite(switch3, LOW);
 
