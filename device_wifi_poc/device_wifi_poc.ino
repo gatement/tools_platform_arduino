@@ -1,21 +1,48 @@
 #include <Arduino.h>
 #include <SoftwareSerial.h>
-#include <WiFly.h>
-#include "debug.h"
-#include "settings.h"
+#include "WiFly.h"
+
+#define DEBUG // comment me out to disable Debug info
+#ifdef DEBUG
+#define DBG0(message)    Serial.print(message)
+#define DBG(message)    Serial.println(message)
+#else
+#define DBG0(message)
+#define DBG(message)
+#endif // DEBUG
+
+#define RETRY_HOST_TIMEOUT      10000
+#define RETRY_AP_TIMEOUT      10000
+
+#define HOST      "xcore.gizwits.com"
+#define PORT      10005
+#define CONNECT_TIMEOUT 15000
+
+#define SSID      "ssid"
+#define KEY       "pwd"
+#define AUTH      WIFLY_AUTH_WPA2_PSK
+
+#define RECV_BUFFER_LEN      100
 
 byte mac[20];
 unsigned int macLen = 0;
+
+unsigned int lastVoltage = 0;
+unsigned int voltageCachedCount = 0;
 
 unsigned int i, j;
 
 char recv_buffer[RECV_BUFFER_LEN];
 unsigned int byteCount;
 
+unsigned char led1 = 12;
+
 WiFly wifly(2, 3); //wifly(TX, RX)
 
 void setup() {
+#ifdef DEBUG
   Serial.begin(9600);
+#endif
 
   pinMode(led1, OUTPUT);
   
@@ -42,6 +69,12 @@ void loop() {
     DBG0("received: ");
     DBG(receivedStr);
     
+    // server side heartbeat checking
+    if(receivedStr.indexOf("#0#") != -1)
+    {
+      sendHeartbeat();
+    }
+    
     // led1 remote control
     if(receivedStr.indexOf("#1#") != -1)
     {
@@ -56,7 +89,9 @@ void loop() {
       while(!connectHost());
     }
   } 
-    
+  
+  monitorVoltage();
+  
   delay(50);
 }
 
@@ -81,6 +116,33 @@ void sendLed1Status()
     // send led status to remote
     wifly.write('C');
     wifly.write(digitalRead(led1));
+}
+
+void sendHeartbeat()
+{
+  wifly.write('D');
+  wifly.write('A');
+  wifly.write('A'); 
+}
+
+void monitorVoltage()
+{ 
+  unsigned int sensorVal = analogRead(A0);
+  voltageCachedCount ++;
+  if(abs(sensorVal - lastVoltage) > 2 || voltageCachedCount == 100)
+  {
+    voltageCachedCount = 0;
+    lastVoltage = sensorVal;
+    DBG0("voltage: ");
+    DBG(sensorVal);
+    
+    byte byte1 = sensorVal/256;
+    byte byte2 = sensorVal%256;
+    
+    wifly.write('B');
+    wifly.write(byte1);
+    wifly.write(byte2);  
+  }
 }
 
 boolean initWifi()
@@ -117,7 +179,7 @@ boolean joinAP()
 { 
   DBG("joining: " SSID);
   int retry_times = 0;
-  while(!wifly.join(SSID, PASSWORD, AUTH))
+  while(!wifly.join(SSID, KEY, AUTH))
   {
     DBG("  retrying...");
     retry_times++;
@@ -125,7 +187,7 @@ boolean joinAP()
     {
       break;
     }
-    delay(RETRY_WIFI_TIMEOUT);
+    delay(RETRY_AP_TIMEOUT);
   }
   if(retry_times == 10)
   {
