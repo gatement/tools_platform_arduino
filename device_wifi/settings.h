@@ -6,8 +6,8 @@
 #define PORT      1883
 #define CONNECT_TIMEOUT 15000
 
-#define SSID      "wolf"
-#define PASSWORD       "JohnsonLau"
+#define SSID      "ssid"
+#define PASSWORD       "pwd"
 #define AUTH      WIFLY_AUTH_WPA2_PSK
 
 #define RECV_BUFFER_LEN      100

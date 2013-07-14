@@ -57,7 +57,6 @@ void loop() {
     }
   } 
     
-  delay(50);
 }
 
 void controlLed1(char val)
