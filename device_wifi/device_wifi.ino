@@ -16,25 +16,24 @@ WiFly wifly(2, 3); //wifly(TX, RX)
 
 void setup() {
   Serial.begin(9600);
-
-  pinMode(led1, OUTPUT);
-  
   DBG("--------- MY WIFLY DEVICE --------");
+     
+  //pinMode(led1, OUTPUT);
   
   // wait for initilization of wifly
-  delay(3000);
+  //delay(3000);
   
-  while(!initWifi())
+  /*while(!initWifi())
   {
     delay(5000);
-  }
+  }*/
   
-  digitalWrite(led1, HIGH);
-  sendLed1Status();
+  //digitalWrite(led1, HIGH);
+  //sendLed1Status();
 }
 
-void loop() {    
-  byteCount = wifly.receive((uint8_t *)recv_buffer, RECV_BUFFER_LEN, 50);  
+void loop() {  
+  /*byteCount = wifly.receive((uint8_t *)recv_buffer, RECV_BUFFER_LEN, 50);  
   if(byteCount > 0)
   {
     recv_buffer[byteCount] = '\0';
@@ -55,11 +54,10 @@ void loop() {
       delay(RETRY_HOST_TIMEOUT);
       while(!connectHost());
     }
-  } 
-    
+  }*/    
 }
 
-void controlLed1(char val)
+/*void controlLed1(char val)
 {    
     if(val == 1)
     {
@@ -73,16 +71,16 @@ void controlLed1(char val)
     }
     
     sendLed1Status();
-}
+}*/
 
-void sendLed1Status()
+/*void sendLed1Status()
 {
     // send led status to remote
     wifly.write('C');
     wifly.write(digitalRead(led1));
-}
+}*/
 
-boolean initWifi()
+/*boolean initWifi()
 { 
   wifly.reset();
   delay(1000);
@@ -110,9 +108,9 @@ boolean initWifi()
   DBG("init done.");
   
   return true;
-}
+}*/
 
-boolean joinAP()
+/*boolean joinAP()
 { 
   DBG("joining: " SSID);
   int retry_times = 0;
@@ -136,9 +134,9 @@ boolean joinAP()
     DBG("  joined: " SSID );
     return true;
   }
-}
+}*/
 
-boolean connectHost()
+/*boolean connectHost()
 {  
   DBG("connecting: " HOST);
   int retry_times = 0;
@@ -164,9 +162,9 @@ boolean connectHost()
     sendOnlineData();
     return true;
   }
-}
+}*/
 
-void sendOnlineData()
+/*void sendOnlineData()
 {
   wifly.write('A');
 
@@ -174,9 +172,9 @@ void sendOnlineData()
   {
     wifly.write(mac[i]);
   }
-}
+}*/
 
-int getMac(byte *mac)
+/*int getMac(byte *mac)
 { 
   int macLen = 0;
   
@@ -209,9 +207,9 @@ int getMac(byte *mac)
   }  
   
   return macLen;
-}
+}*/
 
-void printMac()
+/*void printMac()
 {
   DBG0("mac: ");
   for(i = 0;i < macLen; i++)
@@ -219,4 +217,4 @@ void printMac()
     DBG0((char)mac[i]);
   }
   DBG("");
-}
+}*/
