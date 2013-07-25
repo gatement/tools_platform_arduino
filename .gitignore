@@ -10,3 +10,4 @@ priv/data
 local_linux.config
 run.sh
 erl_crash.dump
+*.swp

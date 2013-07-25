@@ -5,7 +5,7 @@
 
 byte mac[]    = {0x00, 0x00, 0x00, 0x00, 0x00, 0x02};
 char* deviceId = "000000000002";
-char* switchStatusTopic = "/000000000002/switch_status";
+char* switchStatusTopic = "/000000000002/status";
 byte ip[]     = { 192, 168, 1, 12 };
 byte server[] = { 192, 168, 1, 10 };
 uint16_t port = 1883;
