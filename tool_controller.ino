@@ -15,7 +15,7 @@ char* humanStatusTopic = "/000000000002/status";
 byte ip[]     = { 192, 168, 1, 12 };
 byte server[] = { 192, 168, 1, 10 };
 uint16_t port = 1883;
-char* username = "usr";
+char* username = "user";
 char* password = "pwd";
 
 unsigned char switch1 = 2;
@@ -25,7 +25,6 @@ unsigned char humanSensor = 7;
 
 long sendStatusInterval = 60000;  
 
-unsigned char mySwitch2Status = 0;
 long previousMillis = 0;
 int previousHumanStatus = -1;
 EthernetClient ethClient;
@@ -41,10 +40,9 @@ void callback(char* topic, byte* payload, unsigned int length) {
 				break;
 			case 2:
 				digitalWrite(switch2, payload[2]);
-				mySwitch2Status = payload[2];
 				break;
 			case 3:
-				myDigitalWrite(switch3, payload[2]);
+				digitalWrite(switch3, payload[2]);
 				break;
 		} 
 		send_switch_status();
@@ -63,7 +61,7 @@ void setup()
 
 	myDigitalWrite(switch1, HIGH);
 	digitalWrite(switch2, LOW);
-	myDigitalWrite(switch3, LOW);
+	digitalWrite(switch3, LOW);
 
 	Ethernet.begin(mac, ip);
 	connect();
@@ -87,13 +85,6 @@ void loop()
 void human_status()
 {
 	int humanStatus = digitalRead(humanSensor);
-
-	unsigned char oldSwitch2Val = digitalRead(switch2);
-	if(oldSwitch2Val != humanStatus && mySwitch2Status == 0)
-	{
-		digitalWrite(switch2, humanStatus);
-		send_switch_status();
-	}
 
 	if(humanStatus != previousHumanStatus)
 	{
@@ -127,7 +118,7 @@ void connect()
 
 void send_switch_status()
 {
-	int switchStatus = myDigitalRead(switch1) + digitalRead(switch2) * 2 + myDigitalRead(switch3) * 4;
+	int switchStatus = myDigitalRead(switch1) + digitalRead(switch2) * 2 + digitalRead(switch3) * 4;
 	dbg("switch status: ");
 	dbgln(switchStatus);
 	uint8_t payload[] = {CMD_SWITCH_STATUS, switchStatus};
